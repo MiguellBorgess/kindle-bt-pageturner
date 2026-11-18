@@ -31,6 +31,12 @@ See [How it works](#how-it-works) for the details.
 | KOReader | 2026.07.1 |
 | Earbuds | Redmi AirDots (TWSEJ04LS) |
 
+### Community reports
+
+| Kindle | Result |
+|---|---|
+| Kindle Paperwhite (12th generation) | Works (page turns with a noticeable delay) |
+
 ### Will it work on mine?
 
 **Earbuds / headphones:** probably. Any Bluetooth audio device that sends
@@ -42,7 +48,7 @@ reach the Kindle.
 
 1. have **Bluetooth audio** (models with Audible support, roughly 2017 onwards);
 2. be **jailbroken** and running **KOReader**;
-3. broadcast the `BTavrcpCommand` event (only confirmed on the setup above).
+3. broadcast the `BTavrcpCommand` event (confirmed on the models listed above).
 
 ### How to check compatibility
 
@@ -76,7 +82,20 @@ Please open an issue to report results on other devices, working or not.
 
 ## Installation
 
-1. Download this repository (or just the `btpageturner.koplugin` folder).
+### Option 1: Storefront (recommended)
+
+The plugin is listed on [Storefront](https://github.com/ultimatejimmy/storefront.koplugin),
+a plugin store that runs inside KOReader.
+
+1. Make sure your Kindle is connected to Wi-Fi.
+2. In KOReader, open **Tools → Storefront**.
+3. Search for `kindle-bt-pageturner` and install it.
+4. Restart KOReader when asked.
+
+### Option 2: Manual
+
+1. Download this repository (or the `btpageturner.koplugin.zip` file from the
+   [Releases](https://github.com/migpbor/kindle-bt-pageturner/releases) page).
 2. Connect your Kindle to your computer over USB.
 3. Copy the `btpageturner.koplugin` folder into `koreader/plugins/` on the
    Kindle:
@@ -158,7 +177,12 @@ local POLL_INTERVAL = 0.3 -- seconds between checks
 ```
 
 A higher value uses slightly less battery, but adds up to that much delay
-between a tap and the page turn.
+between a tap and the page turn. If page turns feel slow, try a lower value
+such as `0.1`.
+
+Part of the delay also comes from the earbuds themselves: many wait a moment
+after a tap to tell a single tap from a double tap, and no setting on the
+Kindle can change that.
 
 ## Limitations
 
