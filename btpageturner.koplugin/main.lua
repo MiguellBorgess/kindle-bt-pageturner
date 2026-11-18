@@ -79,6 +79,7 @@ function BTPageTurner:check()
         for _ = 1, taps do
             self.ui:handleEvent(Event:new("GotoViewRel", 1))
         end
+        UIManager.event_hook:execute("InputEvent") -- Prevent autosuspend
     end
 end
 
