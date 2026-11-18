@@ -19,66 +19,21 @@ the page.
 
 See [How it works](#how-it-works) for the details.
 
-## Compatibility
-
-### Tested
-
-| Component | Version |
-|---|---|
-| Kindle | Kindle 11th generation |
-| Firmware | 5.19.2.0.1 |
-| Jailbreak | SpiderCat |
-| KOReader | 2026.07.1 |
-| Earbuds | Redmi AirDots (TWSEJ04LS) |
-
-### Community reports
-
-| Kindle | Result |
-|---|---|
-| Kindle Paperwhite (12th generation) | Works (page turns with a noticeable delay) |
-
-### Will it work on mine?
+## Will it work on mine?
 
 **Earbuds / headphones:** probably. Any Bluetooth audio device that sends
 AVRCP play/pause commands should work. On the tested earbuds, only a **single tap** does;
 double tap and long press are handled by the earbuds themselves and never
 reach the Kindle.
 
-**Kindle:** it needs to:
+**Kindle:** confirmed working on the Kindle 11th gen, Paperwhite 5 and
+Paperwhite 12th gen. In general, it needs to:
 
 1. have **Bluetooth audio** (models with Audible support, roughly 2017 onwards);
 2. be **jailbroken** and running **KOReader**;
-3. broadcast the `BTavrcpCommand` event (confirmed on the models listed above).
+3. broadcast the `BTavrcpCommand` event.
 
-### How to check compatibility
-
-You can test compatibility before installing anything. You need a terminal on
-the Kindle (for example, [kTerm](https://github.com/bfabiszewski/kterm),
-available through KPM with `;kpm install kterm`).
-
-1. Connect your earbuds in the Kindle's Bluetooth settings.
-2. Open the terminal and run:
-
-   ```sh
-   lipc-wait-event -m com.lab126.btfd BTavrcpCommand
-   ```
-
-3. Tap your earbud a few times.
-
-If you see lines like these, your Kindle is compatible:
-
-```
-BTavrcpCommand 1
-BTavrcpCommand 0
-BTavrcpCommand 1
-```
-
-(Press `Ctrl` + `C` to stop.)
-
-If nothing shows up, first check that the earbuds are still connected: many
-earbuds and Kindles drop the connection after a while with no audio playing.
-
-Please open an issue to report results on other devices, working or not.
+See [How to check compatibility](#how-to-check-compatibility) for the details.
 
 ## Installation
 
@@ -94,8 +49,8 @@ a plugin store that runs inside KOReader.
 
 ### Option 2: Manual
 
-1. Download this repository (or the `btpageturner.koplugin.zip` file from the
-   [Releases](https://github.com/migpbor/kindle-bt-pageturner/releases) page).
+1. Download the `btpageturner.koplugin.zip` file from the
+   [Releases](https://github.com/migpbor/kindle-bt-pageturner/releases) page.
 2. Connect your Kindle to your computer over USB.
 3. Copy the `btpageturner.koplugin` folder into `koreader/plugins/` on the
    Kindle:
@@ -162,46 +117,53 @@ so it never busy-loops.
   check.
 - For each tap, sends KOReader's `GotoViewRel` event, the same event fired
   when you tap the side of the screen.
+- After turning the page, fires KOReader's `InputEvent` hook so the tap counts
+  as user activity. Without it, AutoSuspend doesn't see the earbuds as input
+  and the Kindle goes to sleep in the middle of reading.
 - Ignores taps that happened while the Kindle was asleep (`onResume`), so it
   doesn't skip pages when you wake it up.
 
-The events file lives in `/tmp`, which is kept in RAM on the Kindle, so it
-doesn't wear the flash storage.
-
-## Configuration
-
-At the top of `main.lua`:
+At the top of `main.lua`, `POLL_INTERVAL` sets how often the plugin checks
+the events file:
 
 ```lua
 local POLL_INTERVAL = 0.3 -- seconds between checks
 ```
 
-A higher value uses slightly less battery, but adds up to that much delay
-between a tap and the page turn. If page turns feel slow, try a lower value
-such as `0.1`.
+A lower value makes page turns feel faster, at the cost of slightly more
+wake-ups.
+The events file lives in `/tmp`, which is kept in RAM on the Kindle, so it
+doesn't wear the flash storage.
 
-Part of the delay also comes from the earbuds themselves: many wait a moment
-after a tap to tell a single tap from a double tap, and no setting on the
-Kindle can change that.
+## How to check compatibility
 
-## Limitations
+You can test compatibility before installing anything. You need a terminal on
+the Kindle (for example, [kTerm](https://github.com/bfabiszewski/kterm),
+available through KPM with `;kpm install kterm`).
 
-- **Next page only.** The tested earbuds only send commands on a single tap,
-  and both PLAY and PAUSE are treated as "next page".
-- **Polling.** The plugin checks the events file a few times per second. The
-  impact on battery should be small, but it isn't zero. An event-driven
-  version (reading a pipe from KOReader's event loop) would be more efficient.
-- **Disconnections.** Earbuds or the Kindle may drop the Bluetooth connection
-  after some time with no audio. Reconnect them in the Bluetooth settings.
-- **Firmware updates** may rename or remove the `BTavrcpCommand` event.
+1. Connect your earbuds in the Kindle's Bluetooth settings.
+2. Open the terminal and run:
 
-## Troubleshooting
+   ```sh
+   lipc-wait-event -m com.lab126.btfd BTavrcpCommand
+   ```
 
-- **Nothing happens:** run the compatibility check above. If events show up in
-  the terminal but pages don't turn, check KOReader's log at
-  `koreader/crash.log` for the line `btpageturner: listener started`.
-  If it's missing, the plugin wasn't loaded: check the
-  folder name and location, then restart KOReader.
+3. Tap your earbud a few times.
+
+If you see lines like these, your Kindle is compatible:
+
+```
+BTavrcpCommand 1
+BTavrcpCommand 0
+BTavrcpCommand 1
+```
+
+(Press `Ctrl` + `C` to stop.)
+
+If nothing shows up, first check that the earbuds are still connected: many
+earbuds and Kindles drop the connection after a while with no audio playing.
+
+Please open an issue to report results on other devices, working or not.
 
 ## License
 
@@ -212,6 +174,9 @@ Kindle can change that.
 - [KOReader](https://github.com/koreader/koreader)
 - [Kindle Modding Wiki](https://kindlemodding.org/) and the jailbreak
   community
+- Everyone on [r/kindlejailbreak](https://www.reddit.com/r/kindlejailbreak/comments/1xx722q/)
+  who is using the plugin and suggesting improvements
+
 
 This project was developed with the help of [Claude](https://claude.ai)
 (Anthropic), which assisted with analyzing system logs, writing the plugin
