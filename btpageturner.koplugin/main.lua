@@ -61,6 +61,7 @@ function BTPageTurner:stopListener()
     f:close()
     if pid then
         os.execute("kill " .. pid .. " 2>/dev/null")
+        logger.info("btpageturner: listener stopped")
     end
     os.remove(PID_FILE)
 end
