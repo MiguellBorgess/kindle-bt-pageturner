@@ -43,7 +43,7 @@ local BTPageTurner = WidgetContainer:extend{
 
 function BTPageTurner:init()
     if not Device:isKindle() then return end
-    self.enabled = G_reader_settings:nilOrTrue("btpageturner_enabled")    
+    self.enabled = G_reader_settings:nilOrTrue("btpageturner_enabled")
     self.last_size = 0
     self.ui.menu:registerToMainMenu(self)
     self.poll = function()
