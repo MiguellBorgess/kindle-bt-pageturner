@@ -75,6 +75,14 @@ a plugin store that runs inside KOReader.
 
 To uninstall, delete the `koreader/plugins/btpageturner.koplugin` folder.
 
+### Settings
+
+Open a book, then go to the navigation tab of the menu → **BT Page Turner**:
+
+- **Enabled**: turn the plugin on or off. The choice is kept after restarting KOReader.
+- **Connected / No device connected**: shows the Bluetooth device the Kindle is connected to.
+- **Version**: the installed plugin version.
+
 ## How it works
 
 There are three layers between a tap and a page turn.
